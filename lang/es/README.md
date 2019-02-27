@@ -1,4 +1,4 @@
-#@atomico/store
+# @atomico/store
 
 pequeño y modular gestor de estados a base de acciones con alcance. 
 
