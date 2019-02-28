@@ -39,19 +39,19 @@ async function increment(state=0){
 
 ### process action
 
-using the hook `useSpace` you can access the nameSpace associated with the action, it returns 2 methods to work with the nameSpace:
+using the hook `getCurrentSpace` you can access the nameSpace associated with the action, it returns 2 methods to work with the nameSpace:
 
 
 * `set(nextState)` : Updates the state associated with the nameSpace.
 * `get()`: allows you to obtain the current status.
 
 ```js
-import {useSpace} from "@atomico/store";
+import {getCurrentSpace} from "@atomico/store";
 
 function request(state={},url){
     if(state.loading)return state;
     
-    let [set,get] = useSpace();
+    let [{set,get},actions] = getCurrentSpace();
 
     fetch(url)
     .then(res=>res.json())
