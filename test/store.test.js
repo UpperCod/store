@@ -1,7 +1,7 @@
 import { Store } from "../src";
 
-describe("Store", () => {
-    let store = Store({
+function createStore() {
+    return Store({
         count: {
             increment(state = 0) {
                 return state + 1;
@@ -11,20 +11,17 @@ describe("Store", () => {
             }
         }
     });
-    test("action subscribe", () => {
+}
+describe("Store", () => {
+    test("action subscribe", done => {
+        let store = createStore();
         let unsubscribe = store.subscribe(state => {
             expect(state.count).toBe(1);
             unsubscribe();
         });
-        store.actions.count.increment(); // 1
-        store.actions.count.increment(); // 2
-    });
-    test("action async promise", done => {
-        let unsubscribe = store.subscribe(state => {
-            expect(state.count).toBe(3);
-            unsubscribe();
+        store.actions.count.increment().then(() => {
+            store.actions.count.increment();
             done();
         });
-        store.actions.count.incrementPromise();
     });
 });
