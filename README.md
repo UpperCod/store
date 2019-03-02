@@ -42,7 +42,7 @@ function *takeoff(){
 let store = Store({rocket:{takeoff}})
 
 store.actions.rocket.takeoff().then(()=>{
-    console.log("done!);
+    console.log("done")
 })
     
 store.subscribe((state)=>{
