@@ -11,7 +11,7 @@ The store allows you to store the status and actions. this will send the subscri
 
 ### Flow of the store
 
-![Flow](../../assets/flow.png)
+![Flow](assets/flow.png)
 
 ### Creation of a store
 
@@ -55,7 +55,7 @@ store.subscribe((state)=>{
 
 The spaces are aliased to store the state of the actions, the following example shows how `@atomico/store` simplifies access to the action through the camelCase pattern.
 
-![actions](../../assets/actions.png)
+![actions](assets/actions.png)
 
 The objective of this is to simplify the maintenance of the store, limiting the status and actions only to a depth level.
 
