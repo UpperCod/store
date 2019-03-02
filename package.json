@@ -1,7 +1,7 @@
 {
   "name": "@atomico/store",
   "description": "small modular state manager",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "dist/atomico-store.js",
   "module": "dist/atomico-store.mjs",
   "umd:main": "dist/atomico-store.umd.js",
@@ -33,7 +33,6 @@
     "regenerator-runtime": "^0.13.1",
     "rollup": "^1.1.2",
     "rollup-plugin-buble": "^0.19.6",
-    "rollup-plugin-nodent": "^0.2.2",
     "rollup-plugin-terser": "^4.0.3"
   },
   "peerDependencies": {
