@@ -131,4 +131,82 @@ export async function *request(state={},payload){
     return {loading:false,data}; // se emite a los suscriptores
 } 
 ```
+## Componentes
 
+`@atomico/store/components` ofrece acceso al store mediante componentes y hooks.
+
+### Provider
+
+Contexto necesario para invocar `useStore` en tiempo de ejecución del componente.
+
+```jsx
+import { h, render } from "@atomico/core";
+import { Store } from "@atomico/store";
+import { Provider } from "@atomico/store/components";
+import App from "./app";
+
+let store = Store(
+    // actions
+    {count : {
+        increment(state){
+            return state+1
+        }
+    }},
+    // initialState
+    {count:0}
+)
+
+render(
+    <Provider store={store}>
+        <App/>
+    </Provider>
+)
+```
+
+### Consumer
+
+permite consumir y suscribirse al contenido del store.
+
+```jsx
+<Consumer space={optionalSpace}>
+    {(state,actions)=>{
+
+    }}
+</Consumer>
+```
+
+### useStore
+
+useStore accede al contexto creado por el componente `Provider`, obteniendo por defecto las acciones y el estado global. este hook también permite la suscrición ante los cambios del store.
+
+```jsx
+import { h } from "@atomico/core";
+import { useStore } from "@atomico/store/components";
+
+export function App(){
+    let [ state ,actions]= useStore();
+
+    return <div>
+        <h1>count : {state.count}</h1>
+        <button onClick={action.count.increment}>increment</button>  
+    </div>
+}
+```
+
+### useStore con nameSpace
+
+permite suscribirse a los cambios solo de un nameSpace, a su vez agrupa las acciones evitando el uso del selector de espacio.
+
+```jsx
+import { h } from "@atomico/core";
+import { useStore } from "@atomico/store/components";
+
+export function App(){
+    let [ state, actions ] = useStore("count");
+
+    return <div>
+        <h1>count : {state}</h1>
+        <button onClick={action.increment}>increment</button>  
+    </div>
+}
+```

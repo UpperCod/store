@@ -120,7 +120,7 @@ export function *request(state={},payload){
 }
 ```
 
-El soporte se aplica incluso a las los generadores asíncronos.
+The support applies even to asynchronous generators.
 
 ```js
 export async function *request(state={},payload){
@@ -132,3 +132,83 @@ export async function *request(state={},payload){
 } 
 ```
 
+
+## Components
+
+`@atomico/store/components` allows access to the store through components and hooks.
+
+### Provider
+
+Necessary context to invoke `a Store` at component runtime.
+
+```jsx
+import { h, render } from "@atomico/core";
+import { Store } from "@atomico/store";
+import { Provider } from "@atomico/store/components";
+import App from "./app";
+
+let store = Store(
+    // actions
+    {count : {
+        increment(state){
+            return state+1
+        }
+    }},
+    // initialState
+    {count:0}
+)
+
+render(
+    <Provider store={store}>
+        <App/>
+    </Provider>
+)
+```
+
+### Consumer
+
+allows you to consume and subscribe to the content of the store.
+
+```jsx
+<Consumer space={optionalSpace}>
+    {(state,actions)=>{
+
+    }}
+</Consumer>
+```
+
+### useStore
+
+useStored to access the context created by the `<Provider/>` component, obtaining by default the actions and the global state. this hook also allows the suscrición before the changes of the store.
+
+```jsx
+import { h } from "@atomico/core";
+import { useStore } from "@atomico/store/components";
+
+export function App(){
+    let [ state ,actions]= useStore();
+
+    return <div>
+        <h1>count : {state.count}</h1>
+        <button onClick={action.count.increment}>increment</button>  
+    </div>
+}
+```
+
+### useStore with nameSpace
+
+allows to subscribe to changes only from a nameSpace, in turn groups the actions avoiding the use of the space selector.
+
+```jsx
+import { h } from "@atomico/core";
+import { useStore } from "@atomico/store/components";
+
+export function App(){
+    let [ state, actions ] = useStore("count");
+
+    return <div>
+        <h1>count : {state}</h1>
+        <button onClick={action.increment}>increment</button>  
+    </div>
+}
+```
