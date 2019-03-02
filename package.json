@@ -1,7 +1,7 @@
 {
   "name": "@atomico/store",
   "description": "small modular state manager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/atomico-store.js",
   "module": "dist/atomico-store.mjs",
   "umd:main": "dist/atomico-store.umd.js",
@@ -16,7 +16,7 @@
     "url": "https://github.com/atomicojs/store.git"
   },
   "scripts": {
-    "test" : "jest",
+    "test": "jest",
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "prepare": "npm run test && npm run build"
@@ -33,6 +33,7 @@
     "regenerator-runtime": "^0.13.1",
     "rollup": "^1.1.2",
     "rollup-plugin-buble": "^0.19.6",
+    "rollup-plugin-nodent": "^0.2.2",
     "rollup-plugin-terser": "^4.0.3"
   },
   "peerDependencies": {

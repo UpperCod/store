@@ -3,158 +3,132 @@
 [![npm](https://badgen.net/npm/v/@atomico/store)](http://npmjs.com/@atomico/store)
 [![gzip](https://badgen.net/bundlephobia/minzip/@atomico/store)](https://bundlephobia.com/result?p=@atomico/store)
 
-pequeño y modular gestor de estados a base de acciones con alcance. 
+Pequeño gestor de estados  a base de espacios, capas de consumir funciones normales, asíncronas, generadores y generadores asíncronos de forma recursiva.
+
+## Store
+
+El store permite almacenar el estado y acciones. este despachara a los suscriptores los cambios realizados por las acciones, **los cambios generados por las acciones deben ser inmutables, ya que es la única forma de despachar un nuevo estado a los suscriptores**.
+
+### Flujo del store
+
+![Flujo](../../assets/flow.png)
+
+### Creación de un store
+
+```js
+let {actions,state, subscribe} = Store( initialActions[, initialState[, logger]]);
+```
+
+- `initialActions` : agrupación de acciones
+- `[initialState]` : estado inicial
+- `[logger]`: función capas de leer las modificaciones emitidas 
+- `actions` : acciones creadas por el store desde `initialActions`
+- `state` : estado actual del store
+- `subscribe` : permite suscribir una función al store, este retorna una función capas de eliminar la suscripción .
+
+### Ejemplo de Store
+
+```js
+
+import {Store} from "@atomico/store";
+
+function *takeoff(){
+    yield "tree" // state {rocket:"tree"}
+    yield "thow" // state {rocket:"two"}
+    yield "one"  // state {rocket:"one"}
+    return "🚀 takeoff!" // state {rocket: "🚀 takeoff!"}
+}
+
+let store = Store({rocket:{takeoff}})
+
+store.actions.rocket.takeoff().then(()=>{
+    console.log("done!);
+})
+    
+store.subscribe((state)=>{
+    console.log(state) 
+})
+
+```
+
+## espacios
+
+Los espacios son alias para almacenar el estado de las acciones, el siguiente ejemplo enseña como `@atomico/store`simplifica el acceso a la acción mediante el patrón camelCase.
+
+![actions](../../assets/actions.png)
+
+EL objetivo de esto es simplificar la mantención del store, limitando el estado y las acciones solo a un nivel de profundidad.
 
 ## acción
 
-las acciones son funciones que retorna un estado al momento de su ejecución, **este estado debe ser inmutable si se desea despachar una actualización**. las acciones en `@atomico/store`  no conocen su almacén ni su nameSpace reservado para almacenar su estado, esto trae como beneficio una acción completamente reutilizable.
-
-### acción síncrona
+función que permite comunicar al store cambio de estado, las acciones pueden ser simples en retorno, como el que se enseña a continuación
 
 ```js
-function increment(state=0){
+export function increment(state=0){
     return state+1;
 }
 ```
 
-### acción con retorno asíncrono
+Las acciones pueden también poseer un comportamiento asíncrono simple:
 
 ```js
-function increment(state=0){
-    return Promise.resolve(state+1)
+export function increment(state,payload){
+    return fetch(payload.url).then((response)=>response.json())
 }
 ```
 
+> la acción, puede recibir un segundo argumento transmitido por la **UI** 
 
-### acción asincrona
+pero el potencial de uso de `@atomico/store`, es la lectura recursiva permitiendo una conversación entre la acción y el store con el uso de [**generadores**](https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Generador)
 
 ```js
-async function increment(state=0){
-    state = await Promise.resolve(state+1)
-    return state;
+export function *increment(state) { 
+	  yield  1;
+	  yield  2;
+	  return 3;
 }
 ```
 
-### acción de proceso
-
-mediante el hook `useSpace` ud puede acceder al nameSpace asociado a la acción, este retorna  2 métodos para trabajar con el nameSpace :
-
-* `set(nextState)` : actualiza el estado asociado al nameSpace.
-* `get()`: permite obtener el estado actual.
+¿Lectura recursiva?... el store lee el retorno de la acción y lo consume hasta finalizar su lectura sea de una promesa o un generador
 
 ```js
-import {useSpace} from "@atomico/store";
-
-function request(state={},url){
-    if(state.loading)return state;
-    
-    let [set,get] = useSpace();
-
-    fetch(url)
-    .then(res=>res.json())
-    .then((data)=>set(loading:false,data));
-
-    return {loading:true};
+function *generatorIncrement1to3(){
+    yield 1;
+    yield 2;
+    return 3;
+}
+function *generatorIncrement3to6(){
+    yield 4;
+    yield 5;
+    return 6;
+}
+export function *increment(state) { 
+	  yield  generatorIncrement1to3();
+	  return  generatorIncrement4to6();
 }
 ```
 
-## Store
-
-el store permite agrupar acciones y estado en nameSpaces que se crean a base del árbol de acciones.
+El beneficio de esto es que ud puede comunicar a los suscriptores el estado actual de un proceso con la intención de seguir su ejecución.
 
 ```js
-import { Store } from "@atomico/store";
-import {increment,decrement} from "./actions/counter";
-
-let store = Store({
-    count1 : {increment,decrement},
-    count2 : {increment,decrement},
-    count3 : {increment,decrement}
-},{count1 : 0 , count2: 2, count:4})
-
-store.actions.count1.increment() // store.state.count1 = 1
-store.actions.count2.increment() // store.state.count2 = 3
-store.actions.count3.increment() // store.state.count3 = 5
-```
-
->  El Store anula la profundidad de manipulación de las acciones solo a un primer índice.
-
-## Componentes
-
-`@atomico/store/components` ofrece acceso al store mediante componentes y hooks.
-
-### Provider
-
-Contexto necesario para invocar `useStore` en tiempo de ejecución del componente.
-
-```jsx
-import { h, render } from "@atomico/core";
-import { Store } from "@atomico/store";
-import { Provider } from "@atomico/store/components";
-import App from "./app";
-
-let store = Store(
-    // actions
-    {count : {
-        increment(state){
-            return state+1
-        }
-    }},
-    // initialState
-    {count:0}
-)
-
-render(
-    <Provider store={store}>
-        <App/>
-    </Provider>
-)
-```
-
-### Consumer
-
-permite consumir y suscribirse al contenido del store.
-
-```jsx
-<Consumer space={optionalSpace}>
-    {(state,actions)=>{
-
-    }}
-</Consumer>
-```
-
-### useStore
-
-useStore accede al contexto creado por el componente `Provider`, obteniendo por defecto las acciones y el estado global. este hook también permite la suscrición ante los cambios del store.
-
-```jsx
-import { h } from "@atomico/core";
-import { useStore } from "@atomico/store/components";
-
-export function App(){
-    let [ state ,actions]= useStore();
-
-    return <div>
-        <h1>count : {state.count}</h1>
-        <button onClick={action.count.increment}>increment</button>  
-    </div>
+export function *request(state={},payload){
+    if(state.loading)return state;// no emitira cambio a los suscriptores
+    yield  {loading:true}; // se emite a los suscriptores
+    return fetch(payload.url)
+    		.then((res)=>res.json())
+    		.then((data)=>{loading:false,data});  // se emite a los suscriptores
 }
 ```
 
-### useStore con nameSpace
+El soporte se aplica incluso a las los generadores asíncronos.
 
-permite suscribirse a los cambios solo de un nameSpace, a su vez agrupa las acciones evitando el uso del selector de espacio.
-
-```jsx
-import { h } from "@atomico/core";
-import { useStore } from "@atomico/store/components";
-
-export function App(){
-    let [ state, actions ] = useStore("count");
-
-    return <div>
-        <h1>count : {state}</h1>
-        <button onClick={action.increment}>increment</button>  
-    </div>
-}
+```js
+export async function *request(state={},payload){
+    if(state.loading)return state;// no emitira cambio a los suscriptores
+    yield  {loading:true}; // se emite a los suscriptores
+    let res = await fetch(payload.url),
+        data = await res.json();
+    return {loading:false,data}; // se emite a los suscriptores
+} 
 ```
+
