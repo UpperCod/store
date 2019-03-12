@@ -1,7 +1,7 @@
 {
   "name": "@atomico/store",
   "description": "small modular state manager",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "main": "dist/atomico-store.js",
   "module": "dist/atomico-store.mjs",
   "umd:main": "dist/atomico-store.umd.js",
@@ -22,7 +22,7 @@
     "prepare": "npm run test && npm run build"
   },
   "devDependencies": {
-    "@atomico/core": ">=1.2.3",
+    "@atomico/core": ">=1.3.0",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "@babel/preset-react": "^7.0.0",
@@ -36,7 +36,7 @@
     "rollup-plugin-terser": "^4.0.3"
   },
   "peerDependencies": {
-    "@atomico/core": ">=1.2.3"
+    "@atomico/core": ">=1.3.0"
   },
   "babel": {
     "presets": [

@@ -9,12 +9,12 @@ import {
 let Context = createContext();
 
 export function Provider({ children, store }) {
-    return <Context.Provider value={store}>{children[0]}</Context.Provider>;
+    return <Context.Provider value={store}>{children}</Context.Provider>;
 }
 
 export function Consumer({ children, space }) {
     let [state, actions] = useStore(space);
-    return children[0](state, actions);
+    return children(state, actions);
 }
 
 export function useStore(nameSpace) {
