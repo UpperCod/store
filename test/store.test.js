@@ -2,12 +2,12 @@ import { Store } from "../src";
 
 function createStore() {
     return Store({
-        count: {
-            increment(state = 0) {
-                return state + 1;
-            },
-            incrementPromise(state = 0) {
-                return Promise.resolve(state + 1);
+        count(state = 0, { type, value }) {
+            switch (type) {
+                case "increment":
+                    return state + 1;
+                default:
+                    return state;
             }
         }
     });
