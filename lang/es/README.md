@@ -5,6 +5,8 @@
 
 Pequeño gestor de estados  a base de espacios, capas de consumir funciones normales, asíncronas, generadores y generadores asíncronos de forma recursiva.
 
+Pequeño gestor de estados, que permite agrupar los reductores en un solo gran objeto con la finalidad de crear 
+
 ## Store
 
 El store permite almacenar el estado y acciones. este despachara a los suscriptores los cambios realizados por las acciones, **los cambios generados por las acciones deben ser inmutables, ya que es la única forma de despachar un nuevo estado a los suscriptores**.

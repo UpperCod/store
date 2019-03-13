@@ -1,14 +1,9 @@
 import pkg from "./package.json";
-import buble from "rollup-plugin-buble";
+import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
+import { sizeSnapshot } from "rollup-plugin-size-snapshot";
 
-let plugins = [
-    buble({
-        jsx: "h",
-        objectAssign: "Object.assign"
-    }),
-    terser()
-];
+let plugins = [babel(), terser(), sizeSnapshot()];
 
 export default [
     {

@@ -1,16 +1,16 @@
 import { Store } from "../src";
 
 function createStore() {
-    return Store({
-        count(state = 0, { type, value }) {
-            switch (type) {
-                case "increment":
+    return Store(
+        {
+            count: {
+                increment(state = 0) {
                     return state + 1;
-                default:
-                    return state;
+                }
             }
-        }
-    });
+        },
+        {}
+    );
 }
 describe("Store", () => {
     test("action subscribe", done => {

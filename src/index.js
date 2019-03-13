@@ -1,45 +1,47 @@
-export function Store(reducers, state = {}, logger) {
+export function Store(reducers, state, logger) {
     let actions = {},
         handlers = [];
 
-    function setSpace(space, action, value, deep = 0) {
+    function getSpace(space) {
+        return space ? state[space] : state;
+    }
+    function setSpace(space, type, value, payload) {
         return Promise.resolve(value).then(value => {
+            let localState = getSpace(space);
             if (typeof value === "function")
-                return setSpace(
-                    space,
-                    action,
-                    value(state[space], action),
-                    deep
-                );
-            // ? value(state[space], action) :
+                return setSpace(space, type, value(localState, payload));
 
             if (typeof value === "object") {
                 if (typeof value.next === "function") {
                     return new Promise(resolve => {
                         function scan(generator) {
-                            Promise.resolve(generator.next(state[space])).then(
-                                ({ value, done }) =>
-                                    setSpace(
-                                        space,
-                                        action,
-                                        value,
-                                        deep + 1
-                                    ).then(() => {
-                                        if (done) {
-                                            resolve(state);
-                                        } else {
-                                            scan(generator);
-                                        }
-                                    })
+                            Promise.resolve(
+                                generator.next(getSpace(space))
+                            ).then(({ value, done }) =>
+                                setSpace(space, type, value).then(() => {
+                                    if (done) {
+                                        resolve(state);
+                                    } else {
+                                        scan(generator);
+                                    }
+                                })
                             );
                         }
                         scan(value);
                     });
                 }
             }
-            if (value !== state[space]) {
-                if (logger) logger(space, action, state[space], value, deep);
-                state = { ...state, [space]: value };
+            if (value !== localState) {
+                if (logger) logger(space, type, localState, value);
+                if (space) {
+                    let nextState = {};
+                    for (let key in state) {
+                        nextState[key] = state[key];
+                    }
+                    nextState[space] = value;
+                    value = nextState;
+                }
+                state = value;
                 let length = handlers.length;
                 for (let i = 0; i < length; i++) handlers[i](state, space);
             }
@@ -47,18 +49,26 @@ export function Store(reducers, state = {}, logger) {
         });
     }
 
-    function createAction(space, reducer) {
-        let action = action => setSpace(space, action, reducer, action);
-        if (typeof Proxy === "function") {
-            action = new Proxy(action, {
-                get: (target, type) => value => target({ type, value })
-            });
-        }
-        actions[space] = action;
+    function createAction(space, type, reducer) {
+        return payload => setSpace(space, type, reducer, payload);
     }
 
-    function setActions(reducers) {
-        for (let key in reducers) createAction(key, reducers[key]);
+    function setActions(reducers, parent) {
+        for (let space in reducers) {
+            let reducer = reducers[space];
+            if (typeof reducer === "object") {
+                for (let type in reducer) {
+                    actions[space] = actions[space] || {};
+                    actions[space][type] = createAction(
+                        space,
+                        type,
+                        reducer[type]
+                    );
+                }
+            } else {
+                actions[space] = createAction(null, space, reducer);
+            }
+        }
     }
 
     function subscribe(handler, space) {

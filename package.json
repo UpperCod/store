@@ -1,7 +1,7 @@
 {
   "name": "@atomico/store",
   "description": "small modular state manager",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "main": "dist/atomico-store.js",
   "module": "dist/atomico-store.mjs",
   "umd:main": "dist/atomico-store.umd.js",
@@ -32,7 +32,8 @@
     "jest": "^24.1.0",
     "regenerator-runtime": "^0.13.1",
     "rollup": "^1.1.2",
-    "rollup-plugin-buble": "^0.19.6",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-size-snapshot": "^0.8.0",
     "rollup-plugin-terser": "^4.0.3"
   },
   "peerDependencies": {
@@ -40,7 +41,14 @@
   },
   "babel": {
     "presets": [
-      "@babel/preset-env",
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "esmodules": true
+          }
+        }
+      ],
       [
         "@babel/preset-react",
         {

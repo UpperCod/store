@@ -24,7 +24,7 @@ export function useStore(nameSpace) {
     useEffect(() => {
         return subscribe((state, fromNameSpace) => {
             if (nameSpace) {
-                if (fromNameSpace === nameSpace) {
+                if (fromNameSpace == nameSpace || fromNameSpace == null) {
                     setState();
                 }
             } else {
