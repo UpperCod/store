@@ -108,7 +108,7 @@ export function *increment(state) {
 }
 ```
 
-El beneficio de esto es que ud puede comunicar a los suscriptores el estado actual de un proceso con la intención de seguir su ejecución.
+El beneficio de esto es que ud puede comunicar a los suscriptores el estado actual de un proceso con la intención de seguir su esjecución.
 
 ```js
 export function *request(state={},payload){
