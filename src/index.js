@@ -3,15 +3,22 @@ export function Store(reducers, state = {}, logger) {
         handlers = [];
 
     function setSpace(space, action, value, deep = 0) {
-        return Promise.resolve(
-            typeof value === "function" ? value(state[space], action) : value
-        ).then(value => {
+        return Promise.resolve(value).then(value => {
+            if (typeof value === "function")
+                return setSpace(
+                    space,
+                    action,
+                    value(state[space], action),
+                    deep
+                );
+            // ? value(state[space], action) :
+
             if (typeof value === "object") {
                 if (typeof value.next === "function") {
                     return new Promise(resolve => {
                         function scan(generator) {
                             Promise.resolve(generator.next(state[space])).then(
-                                ({ value, done }) => {
+                                ({ value, done }) =>
                                     setSpace(
                                         space,
                                         action,
@@ -23,8 +30,7 @@ export function Store(reducers, state = {}, logger) {
                                         } else {
                                             scan(generator);
                                         }
-                                    });
-                                }
+                                    })
                             );
                         }
                         scan(value);
@@ -42,7 +48,7 @@ export function Store(reducers, state = {}, logger) {
     }
 
     function createAction(space, reducer) {
-        let action = action => setSpace(space, action, reducer);
+        let action = action => setSpace(space, action, reducer, action);
         if (typeof Proxy === "function") {
             action = new Proxy(action, {
                 get: (target, type) => value => target({ type, value })
