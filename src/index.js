@@ -1,16 +1,10 @@
-let CURRENT_SPACE;
-
-function join(parent, child) {
-    return parent ? parent + child[0].toUpperCase() + child.slice(1) : child;
-}
-
-export function Store(acts, state = {}, logger) {
+export function Store(reducers, state = {}, logger) {
     let actions = {},
         handlers = [];
 
-    function setSpace(space, action, value, payload) {
+    function setSpace(space, action, value, deep = 0) {
         return Promise.resolve(
-            typeof value === "function" ? value(state[space], payload) : value
+            typeof value === "function" ? value(state[space], action) : value
         ).then(value => {
             if (typeof value === "object") {
                 if (typeof value.next === "function") {
@@ -18,9 +12,14 @@ export function Store(acts, state = {}, logger) {
                         function scan(generator) {
                             Promise.resolve(generator.next(state[space])).then(
                                 ({ value, done }) => {
-                                    setSpace(space, action, value).then(() => {
+                                    setSpace(
+                                        space,
+                                        action,
+                                        value,
+                                        deep + 1
+                                    ).then(() => {
                                         if (done) {
-                                            resolve();
+                                            resolve(state);
                                         } else {
                                             scan(generator);
                                         }
@@ -33,65 +32,27 @@ export function Store(acts, state = {}, logger) {
                 }
             }
             if (value !== state[space]) {
-                if (logger) {
-                    logger(space + "." + action, state[space], value);
-                }
+                if (logger) logger(space, action, state[space], value, deep);
                 state = { ...state, [space]: value };
-                handlers.forEach(handler => handler(state, space));
+                let length = handlers.length;
+                for (let i = 0; i < length; i++) handlers[i](state, space);
             }
+            return state;
         });
     }
-    function setActions(acts, parent = "") {
-        for (let index in acts) {
-            let value = acts[index],
-                type = typeof value;
-            if (type === "object") {
-                setActions(value, join(parent, index));
-                continue;
-            }
-            if (parent && type === "function") {
-                //########## v1 with async
-                //let set = async (value, payload) => {
-                //        let prevValue = state[parent];
-                //        if (typeof value === "function") {
-                //            value = await value(prevValue, payload);
-                //        } else {
-                //            value = await value;
-                //        }
-                //        if (typeof value === "object") {
-                //            if (typeof value.next === "function") {
-                //                return await new Promise(resolve => {
-                //                    async function scan(generator) {
-                //                        let {
-                //                            done,
-                //                            value
-                //                        } = await generator.next(prevValue);
-                //                        await set(value);
-                //                        if (!done) {
-                //                            scan(generator);
-                //                        } else {
-                //                            resolve();
-                //                        }
-                //                    }
-                //                    scan(value);
-                //                });
-                //            }
-                //        }
-                //        if (value !== prevValue) {
-                //            if (logger) {
-                //                logger(parent + "." + index, prevValue, value);
-                //            }
-                //            state = { ...state, [parent]: value };
-                //            handlers.forEach(handler => handler(state, parent));
-                //        }
-                //    },
-                //########## v1.1  without polyfills
 
-                if (!actions[parent]) actions[parent] = {};
-                actions[parent][index] = payload =>
-                    setSpace(parent, index, value, payload);
-            }
+    function createAction(space, reducer) {
+        let action = action => setSpace(space, action, reducer);
+        if (typeof Proxy === "function") {
+            action = new Proxy(action, {
+                get: (target, type) => value => target({ type, value })
+            });
         }
+        actions[space] = action;
+    }
+
+    function setActions(reducers) {
+        for (let key in reducers) createAction(key, reducers[key]);
     }
 
     function subscribe(handler, space) {
@@ -101,12 +62,12 @@ export function Store(acts, state = {}, logger) {
         };
     }
 
-    setActions(acts);
+    setActions(reducers);
 
     return {
         setActions,
-        subscribe,
         actions,
+        subscribe,
         get state() {
             return state;
         }
