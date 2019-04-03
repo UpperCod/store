@@ -5,7 +5,14 @@ export function assign(master, commit) {
 	for (let i = 2; i < arguments.length; i++) assign(master, arguments[i]);
 	return master;
 }
-
+/**
+ * It allows to consume functions, generators and promises
+ * @param {*} value
+ * @param {*} payload
+ * @param {Function} get
+ * @param {(state:Object)} set
+ * @returns {Promise}
+ */
 export function consumer(value, payload, get, set) {
 	return Promise.resolve(value).then(value => {
 		let state = get();

@@ -1,17 +1,17 @@
 {
   "dist/atomico-store.js": {
-    "bundled": 1265,
-    "minified": 1265,
-    "gzipped": 614
+    "bundled": 1256,
+    "minified": 1256,
+    "gzipped": 615
   },
   "dist/atomico-store.umd.js": {
-    "bundled": 1362,
-    "minified": 1362,
-    "gzipped": 663
+    "bundled": 1353,
+    "minified": 1353,
+    "gzipped": 665
   },
   "dist/atomico-store.mjs": {
-    "bundled": 1118,
-    "minified": 1118,
+    "bundled": 1109,
+    "minified": 1109,
     "gzipped": 550,
     "treeshaked": {
       "rollup": {
@@ -24,14 +24,14 @@
     }
   },
   "components.js": {
-    "bundled": 1146,
-    "minified": 1146,
-    "gzipped": 618
+    "bundled": 563,
+    "minified": 563,
+    "gzipped": 334
   },
   "components.mjs": {
-    "bundled": 861,
-    "minified": 861,
-    "gzipped": 528,
+    "bundled": 424,
+    "minified": 424,
+    "gzipped": 284,
     "treeshaked": {
       "rollup": {
         "code": 50,

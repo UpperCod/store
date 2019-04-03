@@ -1,24 +1,12 @@
 import { h, render, useEffect } from "@atomico/core";
-import { Store } from "../src";
+import { initialState, createStore } from "./store";
 import { Provider, useStore, Consumer } from "../components/atomico";
-
-function increment({ value = 0 }) {
-	value++;
-	return { value };
-}
-
-let store = Store(
-	{
-		count: { increment }
-	},
-	{
-		count: { value: 0 }
-	}
-);
 
 function container() {
 	return document.createElement("div");
 }
+
+let store = createStore();
 
 describe("atomico", () => {
 	test("Provider", () => {
@@ -44,9 +32,9 @@ describe("atomico", () => {
 			let [state, actions] = useStore();
 
 			useEffect(() => {
-				actions.count.increment();
+				actions.increment();
 			}, []);
-			expect(state.count.value).toBe(states[index++]);
+			expect(state.value).toBe(states[index++]);
 		}
 		render(
 			<Provider store={store}>
@@ -64,26 +52,6 @@ describe("atomico", () => {
 					{(state, actions) => {
 						expect(actions).toBe(store.actions);
 						expect(state).toBe(store.state);
-					}}
-				</Consumer>
-			);
-		}
-		render(
-			<Provider store={store}>
-				<Test />
-			</Provider>,
-			scope
-		);
-	});
-
-	test("Provider and Consumer space", () => {
-		let scope = container();
-		function Test() {
-			return (
-				<Consumer space="count">
-					{(state, actions) => {
-						expect(actions).toBe(store.actions.count);
-						expect(state).toBe(store.state.count);
 					}}
 				</Consumer>
 			);

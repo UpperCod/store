@@ -1,24 +1,16 @@
-import { Store } from "../src";
+import { initialState, createStore } from "./store";
 
-function createStore() {
-	return Store({
-		count: {
-			increment({ value = 0 }) {
-				value++;
-				return { value };
-			}
-		}
-	});
-}
+let store = createStore();
+
 describe("Store", () => {
 	test("action subscribe", async done => {
 		let store = createStore();
 		let unsubscribe = store.subscribe(state => {
-			expect(state.count.value).toBe(1);
+			expect(state.value).toBe(1);
 			unsubscribe();
 		});
-		await store.actions.count.increment();
-		await store.actions.count.increment();
+		await store.actions.increment();
+		await store.actions.increment();
 		done();
 	});
 });
