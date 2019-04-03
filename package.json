@@ -1,7 +1,7 @@
 {
 	"name": "@atomico/store",
 	"description": "small modular state manager",
-	"version": "0.6.0",
+	"version": "0.7.0",
 	"main": "dist/atomico-store.js",
 	"module": "dist/atomico-store.mjs",
 	"umd:main": "dist/atomico-store.umd.js",
