@@ -28,20 +28,20 @@ export default [
 		],
 		plugins
 	},
-	{
-		input: "components/atomico.js",
+	...["atomico", "preact"].map(file => ({
+		input: `components/${file}.js`,
 		output: [
 			{
-				file: "components.js",
+				file: `${file}.js`,
 				sourcemap: true,
 				format: "cjs"
 			},
 			{
-				file: "components.mjs",
+				file: `${file}.mjs`,
 				sourcemap: true,
 				format: "es"
 			}
 		],
 		plugins
-	}
+	}))
 ];

@@ -1,18 +1,18 @@
 {
   "dist/atomico-store.js": {
-    "bundled": 1256,
-    "minified": 1256,
-    "gzipped": 615
+    "bundled": 1261,
+    "minified": 1261,
+    "gzipped": 616
   },
   "dist/atomico-store.umd.js": {
-    "bundled": 1353,
-    "minified": 1353,
-    "gzipped": 665
+    "bundled": 1358,
+    "minified": 1358,
+    "gzipped": 667
   },
   "dist/atomico-store.mjs": {
-    "bundled": 1109,
-    "minified": 1109,
-    "gzipped": 550,
+    "bundled": 1114,
+    "minified": 1114,
+    "gzipped": 551,
     "treeshaked": {
       "rollup": {
         "code": 0,
@@ -24,21 +24,78 @@
     }
   },
   "components.js": {
-    "bundled": 563,
-    "minified": 563,
-    "gzipped": 334
+    "bundled": 652,
+    "minified": 652,
+    "gzipped": 372
   },
   "components.mjs": {
-    "bundled": 424,
-    "minified": 424,
-    "gzipped": 284,
+    "bundled": 529,
+    "minified": 529,
+    "gzipped": 319,
     "treeshaked": {
       "rollup": {
-        "code": 50,
-        "import_statements": 46
+        "code": 477,
+        "import_statements": 98
       },
       "webpack": {
-        "code": 1038
+        "code": 1444
+      }
+    }
+  },
+  "atomico.js": {
+    "bundled": 652,
+    "minified": 652,
+    "gzipped": 372
+  },
+  "atomico.mjs": {
+    "bundled": 529,
+    "minified": 529,
+    "gzipped": 319,
+    "treeshaked": {
+      "rollup": {
+        "code": 477,
+        "import_statements": 98
+      },
+      "webpack": {
+        "code": 1444
+      }
+    }
+  },
+  "preact.js": {
+    "bundled": 696,
+    "minified": 696,
+    "gzipped": 385
+  },
+  "preact.mjs": {
+    "bundled": 560,
+    "minified": 560,
+    "gzipped": 334,
+    "treeshaked": {
+      "rollup": {
+        "code": 508,
+        "import_statements": 129
+      },
+      "webpack": {
+        "code": 1505
+      }
+    }
+  },
+  "react.js": {
+    "bundled": 793,
+    "minified": 793,
+    "gzipped": 425
+  },
+  "react.mjs": {
+    "bundled": 531,
+    "minified": 531,
+    "gzipped": 322,
+    "treeshaked": {
+      "rollup": {
+        "code": 479,
+        "import_statements": 86
+      },
+      "webpack": {
+        "code": 1459
       }
     }
   }

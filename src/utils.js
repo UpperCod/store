@@ -17,7 +17,7 @@ export function consumer(value, payload, get, set) {
 	return Promise.resolve(value).then(value => {
 		let state = get();
 		if (typeof value == "function") {
-			return consumer(value(state), payload, get, set);
+			return consumer(value(state, payload), null, get, set);
 		}
 		if (typeof value == "object") {
 			if (typeof value.next == "function") {
