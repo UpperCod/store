@@ -1,4 +1,4 @@
-import { initialState, createStore } from "./store";
+import { createStore } from "./store";
 
 let store = createStore();
 

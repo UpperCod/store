@@ -1,5 +1,5 @@
 import { h, render, useEffect } from "@atomico/core";
-import { initialState, createStore } from "./store";
+import { createStore } from "./store";
 import { Provider, useStore, Consumer } from "../components/atomico";
 
 function container() {
