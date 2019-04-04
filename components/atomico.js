@@ -1,38 +1,17 @@
 import {
 	h,
-	createContext,
-	useContext,
+	useState,
 	useEffect,
-	useState
+	useContext,
+	createContext
 } from "@atomico/core";
 
-let Context = createContext();
+import base from "./base";
 
-export function Provider({ children, store }) {
-	return <Context.Provider value={store}>{children}</Context.Provider>;
-}
-
-export function Consumer({ children, space }) {
-	let [state, actions] = useStore(space);
-	return children(state, actions);
-}
-
-export function useStore(nameSpace) {
-	let store = useContext(Context),
-		[ignore, setState] = useState(),
-		{ actions, state } = store;
-
-	useEffect(() => {
-		return store.subscribe((state, fromNameSpace) => {
-			if (nameSpace) {
-				if (fromNameSpace == nameSpace || fromNameSpace == null) {
-					setState();
-				}
-			} else {
-				setState();
-			}
-		});
-	}, [actions]);
-
-	return nameSpace ? [state[nameSpace], actions[nameSpace]] : [state, actions];
-}
+export let { Provider, Consumer, useStore } = base(
+	h,
+	useState,
+	useEffect,
+	useContext,
+	createContext
+);
